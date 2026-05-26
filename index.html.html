@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a3a5c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AutoNoleggio">
+<title>AutoNoleggio</title>
+
+<!-- Icona homescreen iPad (SVG inline come data URI) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjMWEzYTVjIi8+PHN2ZyB4PSIzMCIgeT0iNDUiIHdpZHRoPSIxMjAiIGhlaWdodD0iOTAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxyZWN0IHg9IjEiIHk9IjMiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxMyIgcng9IjIiLz48cGF0aCBkPSJNMTYgOGg0bDMgNXYzaC03VjhaIi8+PGNpcmNsZSBjeD0iNS41IiBjeT0iMTguNSIgcj0iMi41Ii8+PGNpcmNsZSBjeD0iMTguNSIgY3k9IjE4LjUiIHI9IjIuNSIvPjwvc3ZnPjwvc3ZnPg==">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a3a5c'><rect x='1' y='3' width='15' height='13' rx='2' fill='none' stroke='%231a3a5c' stroke-width='2'/><path d='M16 8h4l3 5v3h-7V8z' fill='none' stroke='%231a3a5c' stroke-width='2'/><circle cx='5.5' cy='18.5' r='2.5' fill='none' stroke='%231a3a5c' stroke-width='2'/><circle cx='18.5' cy='18.5' r='2.5' fill='none' stroke='%231a3a5c' stroke-width='2'/></svg>">
+<style>
+  :root {
+    --blu: #1a3a5c;
+    --blu-medio: #2557a7;
+    --blu-chiaro: #e8f0fb;
+    --verde: #1a6b3c;
+    --verde-chiaro: #e6f4ec;
+    --rosso: #b91c1c;
+    --rosso-chiaro: #fee2e2;
+    --arancio: #c45c00;
+    --arancio-chiaro: #fff0e0;
+    --grigio: #64748b;
+    --grigio-chiaro: #f1f5f9;
+    --bianco: #ffffff;
+    --testo: #1e293b;
+    --testo-secondario: #475569;
+    --bordo: #cbd5e1;
+    --ombra: 0 2px 12px rgba(0,0,0,0.08);
+    --raggio: 12px;
+    --raggio-piccolo: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f0f4f8;
+    color: var(--testo);
+    min-height: 100vh;
+    font-size: 16px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--blu);
+    color: white;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .header-logo svg { width: 28px; height: 28px; }
+  .sync-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: var(--raggio-piccolo);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+  }
+  .sync-btn:hover { background: rgba(255,255,255,0.25); }
+  .sync-status { font-size: 12px; opacity: 0.8; }
+
+  /* NAV */
+  .nav {
+    background: var(--bianco);
+    border-bottom: 1px solid var(--bordo);
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    flex: 1;
+    min-width: 120px;
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--grigio);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .nav-tab:hover { color: var(--blu-medio); background: var(--grigio-chiaro); }
+  .nav-tab.active { color: var(--blu-medio); border-bottom-color: var(--blu-medio); background: var(--blu-chiaro); }
+
+  /* MAIN */
+  .main { padding: 20px; max-width: 1100px; margin: 0 auto; }
+  .sezione { display: none; }
+  .sezione.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--bianco);
+    border-radius: var(--raggio);
+    box-shadow: var(--ombra);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-titolo {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--blu);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* BUTTONS */
+  .btn {
+    padding: 12px 20px;
+    border-radius: var(--raggio-piccolo);
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.15s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primario { background: var(--blu-medio); color: white; }
+  .btn-primario:hover { background: var(--blu); }
+  .btn-verde { background: var(--verde); color: white; }
+  .btn-verde:hover { background: #155c32; }
+  .btn-rosso { background: var(--rosso); color: white; }
+  .btn-rosso:hover { background: #991818; }
+  .btn-grigio { background: var(--grigio-chiaro); color: var(--testo); border: 1px solid var(--bordo); }
+  .btn-grigio:hover { background: #e2e8f0; }
+  .btn-piccolo { padding: 7px 12px; font-size: 13px; }
+
+  /* FORM */
+  .form-griglia {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .form-gruppo { display: flex; flex-direction: column; gap: 5px; }
+  .form-gruppo label { font-size: 13px; font-weight: 600; color: var(--testo-secondario); }
+  .form-gruppo input,
+  .form-gruppo select,
+  .form-gruppo textarea {
+    padding: 11px 14px;
+    border: 1.5px solid var(--bordo);
+    border-radius: var(--raggio-piccolo);
+    font-size: 15px;
+    color: var(--testo);
+    background: var(--bianco);
+    transition: border-color 0.2s;
+    font-family: inherit;
+  }
+  .form-gruppo input:focus,
+  .form-gruppo select:focus,
+  .form-gruppo textarea:focus {
+    outline: none;
+    border-color: var(--blu-medio);
+    box-shadow: 0 0 0 3px rgba(37,87,167,0.12);
+  }
+  .form-gruppo textarea { resize: vertical; min-height: 80px; }
+
+  /* BADGE */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-verde { background: var(--verde-chiaro); color: var(--verde); }
+  .badge-rosso { background: var(--rosso-chiaro); color: var(--rosso); }
+  .badge-arancio { background: var(--arancio-chiaro); color: var(--arancio); }
+  .badge-blu { background: var(--blu-chiaro); color: var(--blu-medio); }
+
+  /* TABELLA AUTO */
+  .tabella-container { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--grigio-chiaro);
+    color: var(--testo-secondario);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--bordo);
+  }
+  td {
+    padding: 13px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+  tr:hover td { background: var(--grigio-chiaro); }
+  tr:last-child td { border-bottom: none; }
+
+  /* AUTO CARD (mobile) */
+  .auto-card {
+    background: var(--bianco);
+    border-radius: var(--raggio);
+    box-shadow: var(--ombra);
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--blu-medio);
+  }
+  .auto-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .auto-card-targa { font-size: 18px; font-weight: 800; color: var(--blu); letter-spacing: 1px; }
+  .auto-card-modello { font-size: 15px; color: var(--testo-secondario); margin-bottom: 10px; }
+  .auto-card-dettagli { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* CALENDARIO PRENOTAZIONI */
+  .calendario-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .prenotazione-card {
+    background: var(--bianco);
+    border-radius: var(--raggio);
+    box-shadow: var(--ombra);
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    border-left: 4px solid var(--blu-medio);
+  }
+  .prenotazione-card.shuttle { border-left-color: var(--verde); }
+  .prenotazione-card.scaduta { border-left-color: var(--grigio); opacity: 0.7; }
+  .prenotazione-card.oggi { border-left-color: var(--arancio); }
+  .prenotazione-info { flex: 1; min-width: 200px; }
+  .prenotazione-cliente { font-size: 16px; font-weight: 700; color: var(--blu); }
+  .prenotazione-auto { font-size: 14px; color: var(--testo-secondario); margin-top: 3px; }
+  .prenotazione-date { font-size: 13px; color: var(--grigio); margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+  .prenotazione-azioni { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* DISPONIBILITA */
+  .dispo-risultato {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .dispo-card {
+    padding: 14px;
+    border-radius: var(--raggio-piccolo);
+    border: 1.5px solid;
+    font-size: 14px;
+  }
+  .dispo-libera { background: var(--verde-chiaro); border-color: #86efac; }
+  .dispo-occupata { background: var(--rosso-chiaro); border-color: #fca5a5; }
+  .dispo-card-targa { font-weight: 800; font-size: 16px; letter-spacing: 0.5px; }
+  .dispo-card-modello { font-size: 13px; opacity: 0.8; margin-top: 2px; }
+  .dispo-card-info { font-size: 12px; margin-top: 6px; font-weight: 500; }
+
+  /* DASHBOARD STATS */
+  .stats-griglia {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--bianco);
+    border-radius: var(--raggio);
+    box-shadow: var(--ombra);
+    padding: 18px;
+    text-align: center;
+  }
+  .stat-numero { font-size: 36px; font-weight: 800; color: var(--blu); line-height: 1; }
+  .stat-label { font-size: 13px; color: var(--testo-secondario); margin-top: 6px; font-weight: 500; }
+
+  /* SETUP SHEET */
+  .setup-box {
+    background: var(--blu-chiaro);
+    border: 1.5px solid var(--blu-medio);
+    border-radius: var(--raggio);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .setup-box h3 { color: var(--blu); margin-bottom: 12px; font-size: 17px; }
+  .setup-box p { font-size: 14px; color: var(--testo-secondario); margin-bottom: 10px; line-height: 1.6; }
+  .setup-box input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--bordo);
+    border-radius: var(--raggio-piccolo);
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  .setup-step {
+    background: var(--bianco);
+    border-radius: var(--raggio-piccolo);
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--blu-medio);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--testo);
+  }
+  .setup-step strong { color: var(--blu); }
+  .setup-numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--blu-medio);
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.aperta { display: flex; }
+  .modal {
+    background: var(--bianco);
+    border-radius: var(--raggio);
+    padding: 24px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal-titolo {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--blu);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-azioni { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
+
+  /* NOTIFICA */
+  .notifica {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--blu);
+    color: white;
+    padding: 14px 20px;
+    border-radius: var(--raggio);
+    font-size: 15px;
+    font-weight: 500;
+    z-index: 2000;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    max-width: 320px;
+  }
+  .notifica.verde { background: var(--verde); }
+  .notifica.rosso { background: var(--rosso); }
+  .notifica.visibile { transform: translateY(0); opacity: 1; }
+
+  /* EMPTY STATE */
+  .vuoto {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--grigio);
+  }
+  .vuoto svg { width: 56px; height: 56px; margin-bottom: 12px; opacity: 0.4; }
+  .vuoto p { font-size: 16px; }
+
+  /* FILTRI */
+  .filtri-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .filtri-bar input, .filtri-bar select {
+    padding: 9px 12px;
+    border: 1.5px solid var(--bordo);
+    border-radius: var(--raggio-piccolo);
+    font-size: 14px;
+    color: var(--testo);
+    background: var(--bianco);
+    flex: 1;
+    min-width: 140px;
+  }
+
+  @media (max-width: 600px) {
+    .main { padding: 12px; }
+    .nav-tab { min-width: 90px; font-size: 13px; padding: 14px 8px; }
+    .stats-griglia { grid-template-columns: 1fr 1fr; }
+    .btn { padding: 11px 16px; font-size: 14px; }
+    table { display: none; }
+  }
+  @media (min-width: 601px) {
+    .auto-card { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="1" y="3" width="15" height="13" rx="2"/>
+      <path d="M16 8h4l3 5v3h-7V8z"/>
+      <circle cx="5.5" cy="18.5" r="2.5"/>
+      <circle cx="18.5" cy="18.5" r="2.5"/>
+    </svg>
+    AutoNoleggio
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="sync-status" id="syncStatus">💾 Locale</span>
+    <button class="sync-btn" onclick="apriImpostazioni()">⚙️ Impostazioni</button>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="nav-tab active" onclick="mostraSezione('dashboard')" id="tab-dashboard">
+    📊 Riepilogo
+  </div>
+  <div class="nav-tab" onclick="mostraSezione('flotta')" id="tab-flotta">
+    🚗 Flotta
+  </div>
+  <div class="nav-tab" onclick="mostraSezione('prenotazioni')" id="tab-prenotazioni">
+    📅 Prenotazioni
+  </div>
+  <div class="nav-tab" onclick="mostraSezione('disponibilita')" id="tab-disponibilita">
+    🔍 Disponibilità
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div class="sezione active" id="sezione-dashboard">
+    <div class="stats-griglia">
+      <div class="stat-card">
+        <div class="stat-numero" id="stat-auto">0</div>
+        <div class="stat-label">Auto in flotta</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-numero" id="stat-oggi">0</div>
+        <div class="stat-label">Prenotazioni oggi</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-numero" id="stat-settimana">0</div>
+        <div class="stat-label">Questa settimana</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-numero" id="stat-libere">0</div>
+        <div class="stat-label">Auto libere ora</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titolo">📅 Prenotazioni in corso / prossime</div>
+      <div id="dashboard-prenotazioni"></div>
+    </div>
+  </div>
+
+  <!-- FLOTTA -->
+  <div class="sezione" id="sezione-flotta">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+      <div class="filtri-bar" style="margin:0; flex:1;">
+        <input type="text" placeholder="🔍 Cerca targa o modello..." id="cercaAuto" oninput="renderFlotta()">
+        <select id="filtraTipo" onchange="renderFlotta()">
+          <option value="">Tutti i tipi</option>
+          <option>Berlina</option><option>SUV</option><option>Van/Minivan</option><option>Utilitaria</option><option>Station Wagon</option><option>Cabrio</option>
+        </select>
+      </div>
+      <button class="btn btn-primario" onclick="apriModalAuto()">➕ Aggiungi Auto</button>
+    </div>
+
+    <!-- Tabella desktop -->
+    <div class="tabella-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Targa</th><th>Marca / Modello</th><th>Anno</th><th>Tipo</th><th>Posti</th><th>Carburante</th><th>Cambio</th><th>Stato</th><th>Azioni</th>
+          </tr>
+        </thead>
+        <tbody id="tabella-auto"></tbody>
+      </table>
+    </div>
+    <!-- Cards mobile -->
+    <div id="cards-auto"></div>
+    <div id="vuoto-flotta" class="vuoto" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      <p>Nessuna auto. Aggiungi la prima auto alla flotta.</p>
+    </div>
+  </div>
+
+  <!-- PRENOTAZIONI -->
+  <div class="sezione" id="sezione-prenotazioni">
+    <div class="calendario-header">
+      <div class="filtri-bar" style="margin:0; flex:1;">
+        <input type="text" placeholder="🔍 Cerca cliente o targa..." id="cercaPrenotazione" oninput="renderPrenotazioni()">
+        <select id="filtraServizio" onchange="renderPrenotazioni()">
+          <option value="">Tutti i servizi</option>
+          <option value="noleggio">Noleggio</option>
+          <option value="shuttle">Shuttle</option>
+        </select>
+        <select id="filtraStatoPren" onchange="renderPrenotazioni()">
+          <option value="attive">Attive e future</option>
+          <option value="tutte">Tutte</option>
+          <option value="passate">Passate</option>
+        </select>
+      </div>
+      <button class="btn btn-verde" onclick="apriModalPrenotazione()">➕ Nuova Prenotazione</button>
+    </div>
+    <div id="lista-prenotazioni"></div>
+    <div id="vuoto-prenotazioni" class="vuoto" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <p>Nessuna prenotazione trovata.</p>
+    </div>
+  </div>
+
+  <!-- DISPONIBILITA -->
+  <div class="sezione" id="sezione-disponibilita">
+    <div class="card">
+      <div class="card-titolo">🔍 Verifica Disponibilità</div>
+      <div class="form-griglia">
+        <div class="form-gruppo">
+          <label>Data inizio</label>
+          <input type="date" id="dispo-inizio">
+        </div>
+        <div class="form-gruppo">
+          <label>Data fine</label>
+          <input type="date" id="dispo-fine">
+        </div>
+        <div class="form-gruppo">
+          <label>Tipo auto (opzionale)</label>
+          <select id="dispo-tipo">
+            <option value="">Tutti i tipi</option>
+            <option>Berlina</option><option>SUV</option><option>Van/Minivan</option><option>Utilitaria</option><option>Station Wagon</option><option>Cabrio</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primario" onclick="verificaDisponibilita()">🔍 Verifica</button>
+    </div>
+    <div id="risultato-disponibilita"></div>
+  </div>
+
+</main>
+
+<!-- MODAL AUTO -->
+<div class="modal-overlay" id="modal-auto">
+  <div class="modal">
+    <div class="modal-titolo">
+      <span id="modal-auto-titolo">🚗 Aggiungi Auto</span>
+      <button class="btn btn-piccolo btn-grigio" onclick="chiudiModal('modal-auto')">✕</button>
+    </div>
+    <div class="form-griglia">
+      <div class="form-gruppo">
+        <label>Targa *</label>
+        <input type="text" id="auto-targa" placeholder="es. AB123CD" oninput="this.value=this.value.toUpperCase()">
+      </div>
+      <div class="form-gruppo">
+        <label>Marca *</label>
+        <input type="text" id="auto-marca" placeholder="es. Fiat">
+      </div>
+      <div class="form-gruppo">
+        <label>Modello *</label>
+        <input type="text" id="auto-modello" placeholder="es. Panda">
+      </div>
+      <div class="form-gruppo">
+        <label>Anno immatricolazione</label>
+        <input type="number" id="auto-anno" placeholder="es. 2021" min="2000" max="2030" inputmode="numeric">
+      </div>
+      <div class="form-gruppo">
+        <label>Tipo</label>
+        <select id="auto-tipo">
+          <option>Berlina</option><option>SUV</option><option>Van/Minivan</option><option>Utilitaria</option><option>Station Wagon</option><option>Cabrio</option>
+        </select>
+      </div>
+      <div class="form-gruppo">
+        <label>Posti</label>
+        <input type="number" id="auto-posti" placeholder="es. 5" min="2" max="9" inputmode="numeric">
+      </div>
+      <div class="form-gruppo">
+        <label>Carburante</label>
+        <select id="auto-carburante">
+          <option>Benzina</option><option>Diesel</option><option>Ibrido</option><option>Elettrico</option><option>GPL</option>
+        </select>
+      </div>
+      <div class="form-gruppo">
+        <label>Cambio</label>
+        <select id="auto-cambio">
+          <option value="manuale">Manuale</option>
+          <option value="automatico">Automatico</option>
+        </select>
+      </div>
+      <div class="form-gruppo">
+        <label>Colore</label>
+        <input type="text" id="auto-colore" placeholder="es. Bianco">
+      </div>
+      <div class="form-gruppo">
+        <label>Km attuali</label>
+        <input type="number" id="auto-km" placeholder="es. 25000" inputmode="numeric">
+      </div>
+      <div class="form-gruppo">
+        <label>Chiavi</label>
+        <input type="text" id="auto-chiavi" placeholder="es. 2 chiavi, 1 card">
+      </div>
+      <div class="form-gruppo">
+        <label>Assicurazione</label>
+        <input type="text" id="auto-assicurazione" placeholder="es. Generali, scad. 31/12/2025">
+      </div>
+      <div class="form-gruppo">
+        <label>Scadenza revisione</label>
+        <input type="date" id="auto-revisione">
+      </div>
+      <div class="form-gruppo">
+        <label>Stato</label>
+        <select id="auto-stato">
+          <option value="disponibile">Disponibile</option>
+          <option value="manutenzione">In manutenzione</option>
+          <option value="fuori_servizio">Fuori servizio</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-gruppo" style="margin-bottom:0;">
+      <label>Note</label>
+      <textarea id="auto-note" placeholder="Eventuali note sull'auto..."></textarea>
+    </div>
+    <div class="modal-azioni">
+      <button class="btn btn-grigio" onclick="chiudiModal('modal-auto')">Annulla</button>
+      <button class="btn btn-primario" onclick="salvaAuto()">💾 Salva</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PRENOTAZIONE -->
+<div class="modal-overlay" id="modal-prenotazione">
+  <div class="modal">
+    <div class="modal-titolo">
+      <span id="modal-pren-titolo">📅 Nuova Prenotazione</span>
+      <button class="btn btn-piccolo btn-grigio" onclick="chiudiModal('modal-prenotazione')">✕</button>
+    </div>
+    <div class="form-griglia">
+      <div class="form-gruppo">
+        <label>Cliente *</label>
+        <input type="text" id="pren-cliente" placeholder="Nome e cognome">
+      </div>
+      <div class="form-gruppo">
+        <label>Telefono</label>
+        <input type="tel" id="pren-telefono" placeholder="es. 333 1234567">
+      </div>
+      <div class="form-gruppo">
+        <label>Auto *</label>
+        <select id="pren-auto"></select>
+      </div>
+      <div class="form-gruppo">
+        <label>Tipo servizio</label>
+        <select id="pren-servizio">
+          <option value="noleggio">Noleggio</option>
+          <option value="shuttle">Shuttle (trasferimento)</option>
+        </select>
+      </div>
+      <div class="form-gruppo">
+        <label>Data inizio *</label>
+        <input type="date" id="pren-inizio">
+      </div>
+      <div class="form-gruppo">
+        <label>Ora inizio</label>
+        <input type="time" id="pren-ora-inizio" value="08:00">
+      </div>
+      <div class="form-gruppo">
+        <label>Data fine *</label>
+        <input type="date" id="pren-fine">
+      </div>
+      <div class="form-gruppo">
+        <label>Ora fine</label>
+        <input type="time" id="pren-ora-fine" value="18:00">
+      </div>
+      <div class="form-gruppo" id="gruppo-partenza">
+        <label>Luogo partenza</label>
+        <input type="text" id="pren-partenza" placeholder="es. Aeroporto Lamezia">
+      </div>
+      <div class="form-gruppo" id="gruppo-destinazione">
+        <label>Destinazione</label>
+        <input type="text" id="pren-destinazione" placeholder="es. Hotel Calabria">
+      </div>
+      <div class="form-gruppo">
+        <label>Prezzo (€)</label>
+        <input type="number" id="pren-prezzo" placeholder="es. 80" inputmode="decimal">
+      </div>
+      <div class="form-gruppo">
+        <label>Pagamento</label>
+        <select id="pren-pagamento">
+          <option value="">Non specificato</option>
+          <option value="contanti">Contanti</option>
+          <option value="carta">Carta</option>
+          <option value="bonifico">Bonifico</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-gruppo" style="margin-bottom:0;">
+      <label>Note</label>
+      <textarea id="pren-note" placeholder="Volo, richieste speciali, ecc..."></textarea>
+    </div>
+    <div id="avviso-conflitto" style="display:none; background:var(--rosso-chiaro); border:1px solid #fca5a5; border-radius:var(--raggio-piccolo); padding:12px; margin-top:12px; color:var(--rosso); font-size:14px;"></div>
+    <div class="modal-azioni">
+      <button class="btn btn-grigio" onclick="chiudiModal('modal-prenotazione')">Annulla</button>
+      <button class="btn btn-verde" onclick="salvaPrenotazione()">💾 Salva Prenotazione</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL IMPOSTAZIONI -->
+<div class="modal-overlay" id="modal-impostazioni">
+  <div class="modal">
+    <div class="modal-titolo">
+      <span>⚙️ Impostazioni</span>
+      <button class="btn btn-piccolo btn-grigio" onclick="chiudiModal('modal-impostazioni')">✕</button>
+    </div>
+
+    <div class="setup-box">
+      <h3>📊 Sincronizzazione Google Sheets</h3>
+      <p>Per sincronizzare i dati tra tablet e smartphone, collega un Google Sheet. I dati saranno salvati nel foglio e accessibili da qualsiasi dispositivo.</p>
+
+      <div class="setup-step"><span class="setup-numero">1</span> Vai su <strong>sheets.google.com</strong> e crea un nuovo foglio. Rinominalo <strong>"AutoNoleggio"</strong>.</div>
+      <div class="setup-step"><span class="setup-numero">2</span> Vai su <strong>Estensioni → Apps Script</strong>, incolla lo script riportato sotto e fai clic su <strong>Distribuisci → Nuova distribuzione → App Web</strong>. Imposta accesso: <em>Chiunque</em>. Copia l'URL.</div>
+      <div class="setup-step"><span class="setup-numero">3</span> Incolla l'URL qui sotto e clicca <strong>Connetti</strong>.</div>
+
+      <details style="margin-bottom:12px;">
+        <summary style="cursor:pointer; font-size:14px; color:var(--blu-medio); font-weight:600; padding:8px 0;">📋 Mostra script Apps Script da incollare</summary>
+        <pre style="background:#1e293b;color:#e2e8f0;padding:14px;border-radius:8px;font-size:12px;overflow-x:auto;margin-top:8px;line-height:1.5;">function doPost(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var data = JSON.parse(e.postData.contents);
+  var sheet = ss.getSheetByName(data.foglio) || ss.insertSheet(data.foglio);
+
+  if (data.azione === 'scrivi') {
+    sheet.clearContents();
+    if (data.righe && data.righe.length > 0) {
+      sheet.getRange(1, 1, data.righe.length, data.righe[0].length).setValues(data.righe);
+    }
+  }
+  return ContentService.createTextOutput(JSON.stringify({ok: true})).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var foglio = e.parameter.foglio;
+  var sheet = ss.getSheetByName(foglio);
+  if (!sheet) return ContentService.createTextOutput(JSON.stringify({righe:[]})).setMimeType(ContentService.MimeType.JSON);
+  var dati = sheet.getDataRange().getValues();
+  return ContentService.createTextOutput(JSON.stringify({righe: dati})).setMimeType(ContentService.MimeType.JSON);
+}</pre>
+      </details>
+
+      <label style="font-size:13px;font-weight:600;color:var(--testo-secondario);display:block;margin-bottom:6px;">URL App Web Google Apps Script</label>
+      <input type="url" id="sheets-url" placeholder="https://script.google.com/macros/s/..." style="width:100%;padding:10px 14px;border:1.5px solid var(--bordo);border-radius:8px;font-size:14px;margin-bottom:10px;">
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-primario" onclick="salvaUrlSheet()">🔗 Connetti</button>
+        <button class="btn btn-grigio" onclick="testSync()">🔄 Testa connessione</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+      <button class="btn btn-grigio" onclick="esportaJSON()">⬇️ Esporta backup JSON</button>
+      <button class="btn btn-grigio" onclick="importaJSON()">⬆️ Importa backup JSON</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="leggiFileImport(event)">
+    </div>
+
+    <div style="background:var(--rosso-chiaro);border:1px solid #fca5a5;border-radius:var(--raggio-piccolo);padding:14px;">
+      <strong style="color:var(--rosso);font-size:14px;">⚠️ Zona pericolosa</strong>
+      <p style="font-size:13px;color:var(--rosso);margin-top:6px;">Cancella tutti i dati salvati nel browser. Questa operazione non è reversibile.</p>
+      <button class="btn btn-rosso btn-piccolo" style="margin-top:10px;" onclick="cancellaTuttiDati()">🗑️ Cancella tutti i dati</button>
+    </div>
+
+    <div class="modal-azioni">
+      <button class="btn btn-grigio" onclick="chiudiModal('modal-impostazioni')">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICA -->
+<div class="notifica" id="notifica"></div>
+
+<script>
+// ==================== STATO ====================
+let auto = [];
+let prenotazioni = [];
+let sheetUrl = '';
+let modalAutoIndex = -1;
+let modalPrenIndex = -1;
+
+// ==================== INIT ====================
+function init() {
+  auto = JSON.parse(localStorage.getItem('autonoleggio_auto') || '[]');
+  prenotazioni = JSON.parse(localStorage.getItem('autonoleggio_prenotazioni') || '[]');
+  sheetUrl = localStorage.getItem('autonoleggio_sheeturl') || '';
+  if (sheetUrl) {
+    document.getElementById('syncStatus').textContent = '☁️ Google Sheets';
+    document.getElementById('sheets-url').value = sheetUrl;
+  }
+  aggiornaOgniDato();
+  // Date default disponibilità
+  const oggi = new Date().toISOString().split('T')[0];
+  const domani = new Date(Date.now()+86400000).toISOString().split('T')[0];
+  document.getElementById('dispo-inizio').value = oggi;
+  document.getElementById('dispo-fine').value = domani;
+  // Promemoria backup ogni 30 giorni se non c'è sync con Google Sheets
+  controllaPromemoriaBackup();
+}
+
+function controllaPromemoriaBackup() {
+  if (sheetUrl) return; // se c'è sync attivo, non serve
+  if (auto.length === 0 && prenotazioni.length === 0) return; // niente da backuppare
+  const ultimo = parseInt(localStorage.getItem('autonoleggio_ultimo_backup_promemoria') || '0');
+  const oraMs = Date.now();
+  const trentaGiorni = 30 * 86400000;
+  if (oraMs - ultimo > trentaGiorni) {
+    setTimeout(() => {
+      notifica('💡 Suggerimento: salva un backup dei dati (Impostazioni → Esporta backup JSON)', '');
+      localStorage.setItem('autonoleggio_ultimo_backup_promemoria', oraMs.toString());
+    }, 2000);
+  }
+}
+
+function aggiornaOgniDato() {
+  renderDashboard();
+  renderFlotta();
+  renderPrenotazioni();
+}
+
+// ==================== NAVIGAZIONE ====================
+function mostraSezione(nome) {
+  document.querySelectorAll('.sezione').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sezione-' + nome).classList.add('active');
+  document.getElementById('tab-' + nome).classList.add('active');
+  if (nome === 'prenotazioni') renderPrenotazioni();
+  if (nome === 'flotta') renderFlotta();
+  if (nome === 'dashboard') renderDashboard();
+}
+
+// ==================== DASHBOARD ====================
+function renderDashboard() {
+  const oggi = new Date(); oggi.setHours(0,0,0,0);
+  const fineSettimana = new Date(oggi.getTime() + 7*86400000);
+
+  const prenOggi = prenotazioni.filter(p => {
+    const i = new Date(p.inizio); const f = new Date(p.fine);
+    i.setHours(0,0,0,0); f.setHours(0,0,0,0);
+    return i <= oggi && f >= oggi;
+  });
+  const prenSettimana = prenotazioni.filter(p => {
+    const i = new Date(p.inizio); i.setHours(0,0,0,0);
+    const f = new Date(p.fine); f.setHours(0,0,0,0);
+    return (i <= fineSettimana && f >= oggi);
+  });
+
+  const autoOccupateOggi = new Set(prenOggi.map(p => p.autoId));
+  const autoLibere = auto.filter(a => a.stato === 'disponibile' && !autoOccupateOggi.has(a.id)).length;
+
+  document.getElementById('stat-auto').textContent = auto.length;
+  document.getElementById('stat-oggi').textContent = prenOggi.length;
+  document.getElementById('stat-settimana').textContent = prenSettimana.length;
+  document.getElementById('stat-libere').textContent = autoLibere;
+
+  // Prossime prenotazioni (oggi + future, max 8)
+  const prossime = prenotazioni
+    .filter(p => { const f = new Date(p.fine); f.setHours(23,59,59); return f >= oggi; })
+    .sort((a,b) => new Date(a.inizio)-new Date(b.inizio))
+    .slice(0, 8);
+
+  const cont = document.getElementById('dashboard-prenotazioni');
+  if (!prossime.length) {
+    cont.innerHTML = '<div class="vuoto"><p>Nessuna prenotazione attiva o futura.</p></div>';
+    return;
+  }
+  cont.innerHTML = prossime.map(p => cardPrenotazione(p, true)).join('');
+}
+
+// ==================== FLOTTA ====================
+function salvaAuto() {
+  const targa = document.getElementById('auto-targa').value.trim();
+  const marca = document.getElementById('auto-marca').value.trim();
+  const modello = document.getElementById('auto-modello').value.trim();
+  if (!targa || !marca || !modello) { notifica('Compila i campi obbligatori (Targa, Marca, Modello)', 'rosso'); return; }
+
+  // Controlla targa duplicata
+  const duplicato = auto.findIndex(a => a.targa === targa);
+  if (duplicato !== -1 && duplicato !== modalAutoIndex) { notifica('Targa già presente in flotta!', 'rosso'); return; }
+
+  const nuova = {
+    id: modalAutoIndex >= 0 ? auto[modalAutoIndex].id : Date.now().toString(),
+    targa, marca, modello,
+    anno: document.getElementById('auto-anno').value,
+    tipo: document.getElementById('auto-tipo').value,
+    posti: document.getElementById('auto-posti').value,
+    carburante: document.getElementById('auto-carburante').value,
+    cambio: document.getElementById('auto-cambio').value,
+    colore: document.getElementById('auto-colore').value,
+    km: document.getElementById('auto-km').value,
+    chiavi: document.getElementById('auto-chiavi').value,
+    assicurazione: document.getElementById('auto-assicurazione').value,
+    revisione: document.getElementById('auto-revisione').value,
+    stato: document.getElementById('auto-stato').value,
+    note: document.getElementById('auto-note').value
+  };
+
+  if (modalAutoIndex >= 0) {
+    auto[modalAutoIndex] = nuova;
+    notifica('Auto aggiornata ✓', 'verde');
+  } else {
+    auto.push(nuova);
+    notifica('Auto aggiunta alla flotta ✓', 'verde');
+  }
+
+  salvaLocale();
+  chiudiModal('modal-auto');
+  renderFlotta();
+  renderDashboard();
+  if (sheetUrl) sincronizzaSheet();
+}
+
+function apriModalAuto(index = -1) {
+  modalAutoIndex = index;
+  const campi = ['targa','marca','modello','anno','tipo','posti','carburante','cambio','colore','km','chiavi','assicurazione','revisione','stato','note'];
+  if (index >= 0) {
+    const a = auto[index];
+    campi.forEach(c => {
+      const el = document.getElementById('auto-' + c);
+      if (el) el.value = a[c] || '';
+    });
+    document.getElementById('modal-auto-titolo').textContent = '✏️ Modifica Auto: ' + a.targa;
+  } else {
+    campi.forEach(c => { const el = document.getElementById('auto-' + c); if (el) el.value = ''; });
+    document.getElementById('auto-tipo').value = 'Berlina';
+    document.getElementById('auto-carburante').value = 'Benzina';
+    document.getElementById('auto-cambio').value = 'manuale';
+    document.getElementById('auto-stato').value = 'disponibile';
+    document.getElementById('modal-auto-titolo').textContent = '🚗 Aggiungi Auto';
+  }
+  apriModal('modal-auto');
+}
+
+function eliminaAuto(index) {
+  if (!confirm('Eliminare questa auto dalla flotta?')) return;
+  auto.splice(index, 1);
+  salvaLocale();
+  renderFlotta();
+  renderDashboard();
+  notifica('Auto eliminata', 'rosso');
+  if (sheetUrl) sincronizzaSheet();
+}
+
+function renderFlotta() {
+  const cerca = document.getElementById('cercaAuto').value.toLowerCase();
+  const tipo = document.getElementById('filtraTipo').value;
+  const filtrate = auto.filter(a => {
+    const match = !cerca || a.targa.toLowerCase().includes(cerca) || a.marca.toLowerCase().includes(cerca) || a.modello.toLowerCase().includes(cerca);
+    const tipoOk = !tipo || a.tipo === tipo;
+    return match && tipoOk;
+  });
+
+  const vuoto = document.getElementById('vuoto-flotta');
+  vuoto.style.display = filtrate.length === 0 ? 'block' : 'none';
+
+  // Tabella desktop
+  const tbody = document.getElementById('tabella-auto');
+  tbody.innerHTML = filtrate.map((a, i) => {
+    const idx = auto.indexOf(a);
+    const scadenze = getAvvisiScadenza(a);
+    return `<tr>
+      <td><strong style="font-size:15px;letter-spacing:0.5px;">${esc(a.targa)}</strong>${scadenze}</td>
+      <td>${esc(a.marca)} ${esc(a.modello)}</td>
+      <td>${esc(a.anno) || '—'}</td>
+      <td><span class="badge badge-blu">${esc(a.tipo)}</span></td>
+      <td>${esc(a.posti) || '—'}</td>
+      <td>${esc(a.carburante)}</td>
+      <td>${a.cambio ? (a.cambio === 'automatico' ? '🔄 Automatico' : '⚙️ Manuale') : '—'}</td>
+      <td>${badgeStato(a.stato)}</td>
+      <td>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-piccolo btn-grigio" onclick="apriModalAuto(${idx})">✏️</button>
+          <button class="btn btn-piccolo btn-rosso" onclick="eliminaAuto(${idx})">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Cards mobile
+  const cards = document.getElementById('cards-auto');
+  cards.innerHTML = filtrate.map(a => {
+    const idx = auto.indexOf(a);
+    const scadenze = getAvvisiScadenza(a);
+    return `<div class="auto-card">
+      <div class="auto-card-header">
+        <div>
+          <div class="auto-card-targa">${esc(a.targa)} ${scadenze}</div>
+          <div class="auto-card-modello">${esc(a.marca)} ${esc(a.modello)} ${a.anno ? '('+esc(a.anno)+')' : ''}</div>
+        </div>
+        ${badgeStato(a.stato)}
+      </div>
+      <div class="auto-card-dettagli">
+        <span class="badge badge-blu">${esc(a.tipo)}</span>
+        ${a.posti ? '<span class="badge badge-blu">👥 '+esc(a.posti)+' posti</span>' : ''}
+        <span class="badge badge-blu">⛽ ${esc(a.carburante)}</span>
+        ${a.cambio ? '<span class="badge badge-blu">'+(a.cambio==='automatico'?'🔄 Automatico':'⚙️ Manuale')+'</span>' : ''}
+        ${a.colore ? '<span class="badge badge-blu">🎨 '+esc(a.colore)+'</span>' : ''}
+        ${a.chiavi ? '<span class="badge badge-blu">🔑 '+esc(a.chiavi)+'</span>' : ''}
+        ${a.assicurazione ? '<span class="badge badge-blu">📋 Ass: '+esc(a.assicurazione)+'</span>' : ''}
+      </div>
+      ${a.note ? '<div style="font-size:13px;color:var(--grigio);margin-top:8px;padding-top:8px;border-top:1px solid var(--bordo);">📝 '+esc(a.note)+'</div>' : ''}
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn btn-piccolo btn-grigio" onclick="apriModalAuto(${idx})" style="flex:1;">✏️ Modifica</button>
+        <button class="btn btn-piccolo btn-rosso" onclick="eliminaAuto(${idx})">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function getAvvisiScadenza(a) {
+  const oggi = new Date(); oggi.setHours(0,0,0,0);
+  const presto = new Date(oggi.getTime() + 30*86400000);
+  let avvisi = '';
+  if (a.revisione) {
+    const d = new Date(a.revisione);
+    if (d < oggi) avvisi += ' <span style="color:var(--rosso);font-size:11px;font-weight:700;">⚠️REV</span>';
+    else if (d < presto) avvisi += ' <span style="color:var(--arancio);font-size:11px;font-weight:700;">⚠️REV</span>';
+  }
+  return avvisi;
+}
+
+function badgeStato(stato) {
+  const mappa = {
+    disponibile: ['badge-verde', '✅ Disponibile'],
+    manutenzione: ['badge-arancio', '🔧 Manutenzione'],
+    fuori_servizio: ['badge-rosso', '🚫 Fuori servizio']
+  };
+  const [cls, label] = mappa[stato] || ['badge-blu', stato];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+// ==================== PRENOTAZIONI ====================
+function apriModalPrenotazione(index = -1) {
+  modalPrenIndex = index;
+  // Popola select auto
+  const sel = document.getElementById('pren-auto');
+  sel.innerHTML = auto.map(a => `<option value="${esc(a.id)}">${esc(a.targa)} — ${esc(a.marca)} ${esc(a.modello)}</option>`).join('');
+  if (!auto.length) sel.innerHTML = '<option value="">⚠️ Nessuna auto in flotta — aggiungila prima</option>';
+
+  if (index >= 0) {
+    const p = prenotazioni[index];
+    document.getElementById('pren-cliente').value = p.cliente || '';
+    document.getElementById('pren-telefono').value = p.telefono || '';
+    document.getElementById('pren-auto').value = p.autoId || '';
+    document.getElementById('pren-servizio').value = p.servizio || 'noleggio';
+    document.getElementById('pren-inizio').value = p.inizio || '';
+    document.getElementById('pren-ora-inizio').value = p.oraInizio || '08:00';
+    document.getElementById('pren-fine').value = p.fine || '';
+    document.getElementById('pren-ora-fine').value = p.oraFine || '18:00';
+    document.getElementById('pren-partenza').value = p.partenza || '';
+    document.getElementById('pren-destinazione').value = p.destinazione || '';
+    document.getElementById('pren-prezzo').value = p.prezzo || '';
+    document.getElementById('pren-pagamento').value = p.pagamento || '';
+    document.getElementById('pren-note').value = p.note || '';
+    document.getElementById('modal-pren-titolo').textContent = '✏️ Modifica Prenotazione';
+  } else {
+    ['cliente','telefono','partenza','destinazione','note'].forEach(c => document.getElementById('pren-'+c).value = '');
+    document.getElementById('pren-prezzo').value = '';
+    document.getElementById('pren-servizio').value = 'noleggio';
+    document.getElementById('pren-pagamento').value = '';
+    const oggi = new Date().toISOString().split('T')[0];
+    const domani = new Date(Date.now()+86400000).toISOString().split('T')[0];
+    document.getElementById('pren-inizio').value = oggi;
+    document.getElementById('pren-fine').value = domani;
+    document.getElementById('pren-ora-inizio').value = '08:00';
+    document.getElementById('pren-ora-fine').value = '18:00';
+    document.getElementById('modal-pren-titolo').textContent = '📅 Nuova Prenotazione';
+  }
+  document.getElementById('avviso-conflitto').style.display = 'none';
+  apriModal('modal-prenotazione');
+}
+
+function salvaPrenotazione() {
+  const cliente = document.getElementById('pren-cliente').value.trim();
+  const autoId = document.getElementById('pren-auto').value;
+  const inizio = document.getElementById('pren-inizio').value;
+  const fine = document.getElementById('pren-fine').value;
+  if (!cliente || !autoId || !inizio || !fine) { notifica('Compila i campi obbligatori', 'rosso'); return; }
+  if (new Date(fine) < new Date(inizio)) { notifica('La data fine non può precedere la data inizio', 'rosso'); return; }
+
+  // Controlla conflitti
+  const conflitti = prenotazioni.filter((p, i) => {
+    if (i === modalPrenIndex) return false;
+    if (p.autoId !== autoId) return false;
+    return new Date(p.inizio) <= new Date(fine) && new Date(p.fine) >= new Date(inizio);
+  });
+
+  const avviso = document.getElementById('avviso-conflitto');
+  if (conflitti.length > 0) {
+    avviso.style.display = 'block';
+    avviso.innerHTML = '⚠️ <strong>Attenzione:</strong> questa auto è già prenotata nel periodo selezionato per: ' +
+      conflitti.map(c => `<strong>${esc(c.cliente)}</strong> (${formatData(c.inizio)} → ${formatData(c.fine)})`).join(', ');
+    return;
+  }
+  avviso.style.display = 'none';
+
+  const nuova = {
+    id: modalPrenIndex >= 0 ? prenotazioni[modalPrenIndex].id : Date.now().toString(),
+    cliente,
+    telefono: document.getElementById('pren-telefono').value,
+    autoId,
+    servizio: document.getElementById('pren-servizio').value,
+    inizio,
+    oraInizio: document.getElementById('pren-ora-inizio').value,
+    fine,
+    oraFine: document.getElementById('pren-ora-fine').value,
+    partenza: document.getElementById('pren-partenza').value,
+    destinazione: document.getElementById('pren-destinazione').value,
+    prezzo: document.getElementById('pren-prezzo').value,
+    pagamento: document.getElementById('pren-pagamento').value,
+    note: document.getElementById('pren-note').value
+  };
+
+  if (modalPrenIndex >= 0) {
+    prenotazioni[modalPrenIndex] = nuova;
+    notifica('Prenotazione aggiornata ✓', 'verde');
+  } else {
+    prenotazioni.push(nuova);
+    notifica('Prenotazione salvata ✓', 'verde');
+  }
+
+  salvaLocale();
+  chiudiModal('modal-prenotazione');
+  renderPrenotazioni();
+  renderDashboard();
+  if (sheetUrl) sincronizzaSheet();
+}
+
+function eliminaPrenotazione(index) {
+  if (!confirm('Eliminare questa prenotazione?')) return;
+  prenotazioni.splice(index, 1);
+  salvaLocale();
+  renderPrenotazioni();
+  renderDashboard();
+  notifica('Prenotazione eliminata', 'rosso');
+  if (sheetUrl) sincronizzaSheet();
+}
+
+function renderPrenotazioni() {
+  const cerca = document.getElementById('cercaPrenotazione').value.toLowerCase();
+  const servizio = document.getElementById('filtraServizio').value;
+  const statoFiltro = document.getElementById('filtraStatoPren').value;
+  const oggi = new Date(); oggi.setHours(0,0,0,0);
+
+  let filtrate = prenotazioni.filter(p => {
+    const autoObj = auto.find(a => a.id === p.autoId);
+    const matchCerca = !cerca ||
+      p.cliente.toLowerCase().includes(cerca) ||
+      (autoObj && autoObj.targa.toLowerCase().includes(cerca));
+    const matchServizio = !servizio || p.servizio === servizio;
+    const fineData = new Date(p.fine); fineData.setHours(23,59,59);
+    const inizioData = new Date(p.inizio); inizioData.setHours(0,0,0);
+    let matchStato = true;
+    if (statoFiltro === 'attive') matchStato = fineData >= oggi;
+    else if (statoFiltro === 'passate') matchStato = fineData < oggi;
+    return matchCerca && matchServizio && matchStato;
+  }).sort((a,b) => new Date(a.inizio)-new Date(b.inizio));
+
+  const vuoto = document.getElementById('vuoto-prenotazioni');
+  const lista = document.getElementById('lista-prenotazioni');
+  vuoto.style.display = filtrate.length === 0 ? 'block' : 'none';
+  lista.innerHTML = filtrate.map(p => cardPrenotazione(p, false)).join('');
+}
+
+function cardPrenotazione(p, mini) {
+  const autoObj = auto.find(a => a.id === p.autoId);
+  const autoLabel = autoObj ? `${esc(autoObj.targa)} — ${esc(autoObj.marca)} ${esc(autoObj.modello)}` : 'Auto non trovata';
+  const oggi = new Date(); oggi.setHours(0,0,0,0);
+  const inizioD = new Date(p.inizio); inizioD.setHours(0,0,0,0);
+  const fineD = new Date(p.fine); fineD.setHours(0,0,0,0);
+  const isOggi = inizioD <= oggi && fineD >= oggi;
+  const isPassata = fineD < oggi;
+  const isShuttle = p.servizio === 'shuttle';
+  const idx = prenotazioni.indexOf(p);
+
+  let classeCard = 'prenotazione-card';
+  if (isPassata) classeCard += ' scaduta';
+  else if (isOggi) classeCard += ' oggi';
+  if (isShuttle) classeCard += ' shuttle';
+
+  const giorni = Math.max(1, Math.round((fineD-inizioD)/86400000)+1);
+  const badgeServizio = isShuttle
+    ? '<span class="badge badge-verde">🚌 Shuttle</span>'
+    : '<span class="badge badge-blu">🚗 Noleggio</span>';
+
+  return `<div class="${classeCard}">
+    <div class="prenotazione-info">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="prenotazione-cliente">${esc(p.cliente)}</span>
+        ${badgeServizio}
+        ${isOggi ? '<span class="badge badge-arancio">📍 In corso</span>' : ''}
+        ${isPassata ? '<span class="badge" style="background:#f1f5f9;color:var(--grigio);">Completata</span>' : ''}
+      </div>
+      <div class="prenotazione-auto">🚗 ${autoLabel}</div>
+      <div class="prenotazione-date">
+        📅 ${formatData(p.inizio)} ${p.oraInizio ? esc(p.oraInizio) : ''}
+        → ${formatData(p.fine)} ${p.oraFine ? esc(p.oraFine) : ''}
+        <span style="background:var(--grigio-chiaro);padding:2px 8px;border-radius:10px;font-size:12px;">${giorni} giorn${giorni===1?'o':'i'}</span>
+      </div>
+      ${p.partenza || p.destinazione ? `<div style="font-size:13px;color:var(--grigio);margin-top:3px;">📍 ${esc(p.partenza) || '—'} → ${esc(p.destinazione) || '—'}</div>` : ''}
+      ${p.telefono ? `<div style="font-size:13px;color:var(--grigio);margin-top:3px;">📞 ${esc(p.telefono)}</div>` : ''}
+      ${p.prezzo ? `<div style="font-size:13px;color:var(--verde);font-weight:600;margin-top:3px;">💶 € ${esc(p.prezzo)}${p.pagamento ? ' · '+esc(p.pagamento) : ''}</div>` : ''}
+      ${p.note ? `<div style="font-size:13px;color:var(--grigio);margin-top:3px;font-style:italic;">📝 ${esc(p.note)}</div>` : ''}
+    </div>
+    ${!mini ? `<div class="prenotazione-azioni">
+      <button class="btn btn-piccolo btn-grigio" onclick="apriModalPrenotazione(${idx})">✏️ Modifica</button>
+      <button class="btn btn-piccolo btn-rosso" onclick="eliminaPrenotazione(${idx})">🗑️</button>
+    </div>` : ''}
+  </div>`;
+}
+
+// ==================== DISPONIBILITA ====================
+function verificaDisponibilita() {
+  const inizio = document.getElementById('dispo-inizio').value;
+  const fine = document.getElementById('dispo-fine').value;
+  const tipo = document.getElementById('dispo-tipo').value;
+  if (!inizio || !fine) { notifica('Seleziona le date', 'rosso'); return; }
+  if (new Date(fine) < new Date(inizio)) { notifica('La data fine non può precedere la data inizio', 'rosso'); return; }
+
+  const autoFiltrate = auto.filter(a => !tipo || a.tipo === tipo);
+  const cont = document.getElementById('risultato-disponibilita');
+
+  if (!autoFiltrate.length) {
+    cont.innerHTML = '<div class="vuoto"><p>Nessuna auto in flotta con questi filtri.</p></div>';
+    return;
+  }
+
+  const libere = [];
+  const occupate = [];
+
+  autoFiltrate.forEach(a => {
+    if (a.stato === 'manutenzione') {
+      occupate.push({ auto: a, motivo: '🔧 In manutenzione', fino: null });
+      return;
+    }
+    if (a.stato === 'fuori_servizio') {
+      occupate.push({ auto: a, motivo: '🚫 Fuori servizio', fino: null });
+      return;
+    }
+    const conflitti = prenotazioni.filter(p =>
+      p.autoId === a.id &&
+      new Date(p.inizio) <= new Date(fine) &&
+      new Date(p.fine) >= new Date(inizio)
+    );
+    if (conflitti.length > 0) {
+      const ultimo = conflitti.sort((a,b) => new Date(b.fine)-new Date(a.fine))[0];
+      occupate.push({ auto: a, motivo: `📅 Prenotata da ${ultimo.cliente}`, fino: ultimo.fine });
+    } else {
+      libere.push(a);
+    }
+  });
+
+  let html = `<div class="card">
+    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+      <span style="font-size:16px;font-weight:700;color:var(--testo);">
+        Risultati: ${formatData(inizio)} → ${formatData(fine)}
+      </span>
+      <span class="badge badge-verde">✅ ${libere.length} libere</span>
+      <span class="badge badge-rosso">🚫 ${occupate.length} non disponibili</span>
+    </div>`;
+
+  if (libere.length) {
+    html += `<div style="margin-bottom:8px;font-weight:600;color:var(--verde);font-size:14px;">✅ AUTO DISPONIBILI</div>
+    <div class="dispo-risultato">
+      ${libere.map(a => `
+        <div class="dispo-card dispo-libera">
+          <div class="dispo-card-targa">${esc(a.targa)}</div>
+          <div class="dispo-card-modello">${esc(a.marca)} ${esc(a.modello)}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">
+            <span style="font-size:12px;background:white;padding:2px 8px;border-radius:8px;color:var(--verde);">${esc(a.tipo)}</span>
+            ${a.posti ? `<span style="font-size:12px;background:white;padding:2px 8px;border-radius:8px;color:var(--verde);">👥 ${esc(a.posti)}</span>` : ''}
+          </div>
+          <button class="btn btn-verde btn-piccolo" style="margin-top:10px;width:100%;" onclick="prenotaAuto('${esc(a.id)}', '${inizio}', '${fine}')">
+            📅 Prenota
+          </button>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  if (occupate.length) {
+    html += `<div style="margin:16px 0 8px;font-weight:600;color:var(--rosso);font-size:14px;">🚫 NON DISPONIBILI</div>
+    <div class="dispo-risultato">
+      ${occupate.map(o => `
+        <div class="dispo-card dispo-occupata">
+          <div class="dispo-card-targa">${esc(o.auto.targa)}</div>
+          <div class="dispo-card-modello">${esc(o.auto.marca)} ${esc(o.auto.modello)}</div>
+          <div class="dispo-card-info">${esc(o.motivo)}</div>
+          ${o.fino ? `<div style="font-size:12px;margin-top:4px;">Libera dal: <strong>${formatData(new Date(new Date(o.fino).getTime()+86400000).toISOString().split('T')[0])}</strong></div>` : ''}
+        </div>`).join('')}
+    </div>`;
+  }
+
+  html += '</div>';
+  cont.innerHTML = html;
+}
+
+function prenotaAuto(autoId, inizio, fine) {
+  mostraSezione('prenotazioni');
+  setTimeout(() => {
+    apriModalPrenotazione();
+    document.getElementById('pren-auto').value = autoId;
+    document.getElementById('pren-inizio').value = inizio;
+    document.getElementById('pren-fine').value = fine;
+  }, 100);
+}
+
+// ==================== STORAGE ====================
+function salvaLocale() {
+  localStorage.setItem('autonoleggio_auto', JSON.stringify(auto));
+  localStorage.setItem('autonoleggio_prenotazioni', JSON.stringify(prenotazioni));
+}
+
+// ==================== GOOGLE SHEETS SYNC ====================
+function salvaUrlSheet() {
+  const url = document.getElementById('sheets-url').value.trim();
+  if (!url) { notifica('Inserisci l\'URL dello script', 'rosso'); return; }
+  sheetUrl = url;
+  localStorage.setItem('autonoleggio_sheeturl', url);
+  document.getElementById('syncStatus').textContent = '☁️ Google Sheets';
+  notifica('URL salvato! Provo la connessione...', 'verde');
+  sincronizzaSheet();
+}
+
+async function sincronizzaSheet() {
+  if (!sheetUrl) return;
+  try {
+    const autoRighe = [
+      ['id','targa','marca','modello','anno','tipo','posti','carburante','cambio','colore','km','chiavi','assicurazione','revisione','stato','note'],
+      ...auto.map(a => [a.id,a.targa,a.marca,a.modello,a.anno,a.tipo,a.posti,a.carburante,a.cambio,a.colore,a.km,a.chiavi,a.assicurazione,a.revisione,a.stato,a.note])
+    ];
+    const prenRighe = [
+      ['id','cliente','telefono','autoId','servizio','inizio','oraInizio','fine','oraFine','partenza','destinazione','prezzo','pagamento','note'],
+      ...prenotazioni.map(p => [p.id,p.cliente,p.telefono,p.autoId,p.servizio,p.inizio,p.oraInizio,p.fine,p.oraFine,p.partenza,p.destinazione,p.prezzo,p.pagamento,p.note])
+    ];
+    await fetch(sheetUrl, { method:'POST', body: JSON.stringify({foglio:'Auto', azione:'scrivi', righe:autoRighe}) });
+    await fetch(sheetUrl, { method:'POST', body: JSON.stringify({foglio:'Prenotazioni', azione:'scrivi', righe:prenRighe}) });
+    document.getElementById('syncStatus').textContent = '☁️ Sincronizzato ✓';
+    notifica('Sincronizzato con Google Sheets ✓', 'verde');
+  } catch(e) {
+    notifica('Errore sincronizzazione: ' + e.message, 'rosso');
+  }
+}
+
+async function testSync() {
+  if (!sheetUrl) { notifica('Inserisci prima l\'URL', 'rosso'); return; }
+  try {
+    const r = await fetch(sheetUrl + '?foglio=Auto');
+    if (r.ok) notifica('Connessione riuscita ✓', 'verde');
+    else notifica('Connessione fallita (HTTP ' + r.status + ')', 'rosso');
+  } catch(e) {
+    notifica('Errore: ' + e.message, 'rosso');
+  }
+}
+
+// ==================== BACKUP ====================
+function esportaJSON() {
+  const data = { auto, prenotazioni, esportato: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'autonoleggio_backup_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+  notifica('Backup esportato ✓', 'verde');
+}
+
+function importaJSON() { document.getElementById('import-file').click(); }
+
+function leggiFileImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data.auto || !data.prenotazioni) throw new Error('Formato non valido');
+      if (!confirm(`Importare ${data.auto.length} auto e ${data.prenotazioni.length} prenotazioni? I dati attuali verranno sostituiti.`)) return;
+      auto = data.auto;
+      prenotazioni = data.prenotazioni;
+      salvaLocale();
+      aggiornaOgniDato();
+      notifica('Backup importato ✓', 'verde');
+    } catch(err) {
+      notifica('File non valido: ' + err.message, 'rosso');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function cancellaTuttiDati() {
+  if (!confirm('ATTENZIONE: cancellare TUTTI i dati? Questa operazione non è reversibile.')) return;
+  if (!confirm('Sei sicuro? Tutti i dati verranno persi.')) return;
+  auto = []; prenotazioni = [];
+  localStorage.removeItem('autonoleggio_auto');
+  localStorage.removeItem('autonoleggio_prenotazioni');
+  aggiornaOgniDato();
+  notifica('Tutti i dati eliminati', 'rosso');
+}
+
+// ==================== UTILS ====================
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function formatData(dataStr) {
+  if (!dataStr) return '—';
+  const d = new Date(dataStr + 'T00:00:00');
+  return d.toLocaleDateString('it-IT', {day:'2-digit',month:'2-digit',year:'numeric'});
+}
+
+function apriModal(id) { document.getElementById(id).classList.add('aperta'); }
+function chiudiModal(id) { document.getElementById(id).classList.remove('aperta'); }
+function apriImpostazioni() { apriModal('modal-impostazioni'); }
+
+function notifica(msg, tipo = '') {
+  const el = document.getElementById('notifica');
+  el.textContent = msg;
+  el.className = 'notifica visibile' + (tipo ? ' ' + tipo : '');
+  clearTimeout(el._t);
+  const durata = tipo ? 3500 : 5500;
+  el._t = setTimeout(() => el.classList.remove('visibile'), durata);
+}
+
+// Chiudi modal cliccando fuori
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('aperta');
+  });
+});
+
+// ==================== START ====================
+init();
+</script>
+</body>
+</html>
